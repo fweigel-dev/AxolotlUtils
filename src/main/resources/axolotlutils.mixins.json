@@ -1,0 +1,14 @@
+{
+	"required": true,
+	"package": "dev.fweigel.mixin",
+	"compatibilityLevel": "JAVA_21",
+	"mixins": [
+		"AnimalBreedingMixin"
+	],
+	"injectors": {
+		"defaultRequire": 1
+	},
+	"overwrites": {
+		"requireAnnotations": true
+	}
+}

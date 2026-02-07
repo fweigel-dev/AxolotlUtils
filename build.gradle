@@ -24,12 +24,36 @@ loom {
 	}
 }
 
+sourceSets {
+	clientTest {
+		compileClasspath += sourceSets.client.output + sourceSets.main.output
+		runtimeClasspath += sourceSets.client.output + sourceSets.main.output
+	}
+}
+
+configurations {
+	clientTestImplementation.extendsFrom clientImplementation, implementation
+	clientTestRuntimeOnly.extendsFrom clientRuntimeOnly, runtimeOnly
+}
+
 dependencies {
         minecraft "com.mojang:minecraft:${project.minecraft_version}"
         mappings loom.officialMojangMappings()
         modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
         modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
+
+        clientTestImplementation "org.junit.jupiter:junit-jupiter:5.11.4"
+        clientTestRuntimeOnly "org.junit.platform:junit-platform-launcher"
 }
+
+tasks.register('clientTest', Test) {
+	group = 'verification'
+	testClassesDirs = sourceSets.clientTest.output.classesDirs
+	classpath = sourceSets.clientTest.runtimeClasspath
+	useJUnitPlatform()
+}
+
+check.dependsOn clientTest
 
 processResources {
 	inputs.property "version", project.version

@@ -6,7 +6,8 @@
 		"AxolotlRendererMixin",
 		"AxolotlBucketOverlayMixin",
 		"ItemModelResolverMixin",
-		"AxolotlSoundMixin"
+		"AxolotlSoundMixin",
+		"AnimalEntityEventMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

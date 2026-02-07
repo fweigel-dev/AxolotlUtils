@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "minecraft:item/axolotl_bucket",
+    "layer1": "axolotlutils:item/axolotl_bucket/axolotl_bucket_4"
+  }
+}

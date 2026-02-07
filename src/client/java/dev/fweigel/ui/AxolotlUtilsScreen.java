@@ -15,117 +15,131 @@ public class AxolotlUtilsScreen extends Screen {
     private Button iconColorButton;
     private Button animationToggle;
 
+    private static final int BUTTON_WIDTH = 200;
+    private static final int HALF_BUTTON_WIDTH = 96;
+    private static final int BUTTON_HEIGHT = 20;
+    private static final int BUTTON_GAP = 24;
+
+    private final Component featuresHeader = Component.translatable("axolotlutils.screen.section.features");
+    private final Component breedingHeader = Component.translatable("axolotlutils.screen.section.breeding");
+
     public AxolotlUtilsScreen() {
-        super(Component.literal("Axolotl Utils"));
+        super(Component.translatable("axolotlutils.screen.title"));
     }
 
     @Override
     protected void init() {
-        int centerX = this.width / 2;
-        int startY = 50;
-        int buttonWidth = 240;
-        int buttonHeight = 20;
-        int sectionSpacing = 44;
+        int cx = this.width / 2;
 
-        // Feature 1: Easy Find Blue Axolotls
-        highlightToggle = Button.builder(
-                Component.literal(getHighlightLabel()),
+        // --- Features section ---
+        int featuresHeaderY = 36;
+        int y = featuresHeaderY + 14;
+
+        highlightToggle = addRenderableWidget(Button.builder(
+                getHighlightLabel(),
                 button -> {
                     AxolotlUtilsConfig.toggleHighlightBlue();
-                    highlightToggle.setMessage(Component.literal(getHighlightLabel()));
+                    highlightToggle.setMessage(getHighlightLabel());
                     AxolotlUtilsStorage.save();
                 }
-        ).bounds(centerX - buttonWidth / 2, startY, buttonWidth, buttonHeight).build();
-        this.addRenderableWidget(highlightToggle);
+        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
-        // Feature 2: Colored Axolotl Buckets
-        coloredBucketsToggle = Button.builder(
-                Component.literal(getColoredBucketsLabel()),
+        y += BUTTON_GAP;
+
+        coloredBucketsToggle = addRenderableWidget(Button.builder(
+                getColoredBucketsLabel(),
                 button -> {
                     AxolotlUtilsConfig.toggleColoredBuckets();
-                    coloredBucketsToggle.setMessage(Component.literal(getColoredBucketsLabel()));
+                    coloredBucketsToggle.setMessage(getColoredBucketsLabel());
                     AxolotlUtilsStorage.save();
                 }
-        ).bounds(centerX - buttonWidth / 2, startY + sectionSpacing, buttonWidth, buttonHeight).build();
-        this.addRenderableWidget(coloredBucketsToggle);
+        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
-        // Feature 3: Breeding Tracker
-        breedingToggle = Button.builder(
-                Component.literal(getBreedingLabel()),
+        // --- Breeding Tracker section ---
+        int breedingSectionY = y + BUTTON_GAP + 16;
+        y = breedingSectionY + 14;
+
+        breedingToggle = addRenderableWidget(Button.builder(
+                getBreedingLabel(),
                 button -> {
                     AxolotlUtilsConfig.toggleBreedingTracker();
-                    breedingToggle.setMessage(Component.literal(getBreedingLabel()));
+                    breedingToggle.setMessage(getBreedingLabel());
                     boolean enabled = AxolotlUtilsConfig.isBreedingTrackerEnabled();
                     iconColorButton.active = enabled;
                     animationToggle.active = enabled;
                     AxolotlUtilsStorage.save();
                 }
-        ).bounds(centerX - buttonWidth / 2, startY + sectionSpacing * 2, buttonWidth, buttonHeight).build();
-        this.addRenderableWidget(breedingToggle);
+        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
-        // Reset breeding counter
-        int resetY = startY + sectionSpacing * 2 + 46;
-        this.addRenderableWidget(Button.builder(
-                Component.literal("Reset Counter"),
+        y += BUTTON_GAP;
+
+        // Icon color + animation side by side
+        int gap = 8;
+        int leftX = cx - HALF_BUTTON_WIDTH - gap / 2;
+        int rightX = cx + gap / 2;
+
+        iconColorButton = addRenderableWidget(Button.builder(
+                getIconColorLabel(),
+                button -> {
+                    AxolotlUtilsConfig.cycleHudIconColor();
+                    iconColorButton.setMessage(getIconColorLabel());
+                    AxolotlUtilsStorage.save();
+                }
+        ).bounds(leftX, y, HALF_BUTTON_WIDTH, BUTTON_HEIGHT).build());
+        iconColorButton.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
+
+        animationToggle = addRenderableWidget(Button.builder(
+                getAnimationLabel(),
+                button -> {
+                    AxolotlUtilsConfig.toggleHudAnimated();
+                    animationToggle.setMessage(getAnimationLabel());
+                    AxolotlUtilsStorage.save();
+                }
+        ).bounds(rightX, y, HALF_BUTTON_WIDTH, BUTTON_HEIGHT).build());
+        animationToggle.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
+
+        y += BUTTON_GAP;
+
+        // Reset counter - smaller, centered
+        addRenderableWidget(Button.builder(
+                Component.translatable("axolotlutils.screen.reset_counter"),
                 button -> {
                     BreedingTracker.reset();
                     AxolotlUtilsStorage.save();
                 }
-        ).bounds(centerX - 50, resetY, 100, buttonHeight).build());
+        ).bounds(cx - 50, y, 100, BUTTON_HEIGHT).build());
 
-        // Icon color cycle button
-        int subButtonWidth = 160;
-        int iconColorY = resetY + 24;
-        iconColorButton = Button.builder(
-                Component.literal(getIconColorLabel()),
-                button -> {
-                    AxolotlUtilsConfig.cycleHudIconColor();
-                    iconColorButton.setMessage(Component.literal(getIconColorLabel()));
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(centerX - subButtonWidth / 2, iconColorY, subButtonWidth, buttonHeight).build();
-        iconColorButton.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
-        this.addRenderableWidget(iconColorButton);
-
-        // Animation toggle button
-        int animToggleY = iconColorY + 24;
-        animationToggle = Button.builder(
-                Component.literal(getAnimationLabel()),
-                button -> {
-                    AxolotlUtilsConfig.toggleHudAnimated();
-                    animationToggle.setMessage(Component.literal(getAnimationLabel()));
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(centerX - subButtonWidth / 2, animToggleY, subButtonWidth, buttonHeight).build();
-        animationToggle.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
-        this.addRenderableWidget(animationToggle);
+        // --- Done button at bottom ---
+        addRenderableWidget(Button.builder(
+                Component.translatable("gui.done"),
+                button -> this.onClose()
+        ).bounds(cx - BUTTON_WIDTH / 2, this.height - 28, BUTTON_WIDTH, BUTTON_HEIGHT).build());
     }
 
     @Override
     public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        graphics.fillGradient(0, 0, this.width, this.height, 0xC0101010, 0xD0101010);
         super.render(graphics, mouseX, mouseY, delta);
 
-        int centerX = this.width / 2;
-        int startY = 50;
-        int sectionSpacing = 44;
+        int cx = this.width / 2;
 
-        graphics.drawCenteredString(this.font, this.title, centerX, 20, 0xFFFFFF);
+        // Title
+        graphics.drawCenteredString(this.font, this.title, cx, 15, 0xFFFFFFFF);
 
-        // Section labels
-        graphics.drawCenteredString(this.font, "Easy Find Blue Axolotls",
-                centerX, startY - 12, 0xA0A0A0);
+        // --- Features section header ---
+        int featuresHeaderY = 36;
+        graphics.drawCenteredString(this.font, this.featuresHeader, cx, featuresHeaderY, 0xFFFFFFFF);
+        drawSeparator(graphics, cx, featuresHeaderY + 10);
 
-        graphics.drawCenteredString(this.font, "Colored Axolotl Buckets",
-                centerX, startY + sectionSpacing - 12, 0xA0A0A0);
+        // --- Breeding Tracker section header ---
+        int breedingSectionY = featuresHeaderY + 14 + BUTTON_GAP * 2 + 16;
+        graphics.drawCenteredString(this.font, this.breedingHeader, cx, breedingSectionY, 0xFFFFFFFF);
+        drawSeparator(graphics, cx, breedingSectionY + 10);
 
-        graphics.drawCenteredString(this.font, "Breeding Tracker",
-                centerX, startY + sectionSpacing * 2 - 12, 0xA0A0A0);
+    }
 
-        // Breeding count display
-        String countText = "Axolotls bred: " + BreedingTracker.getCount();
-        graphics.drawCenteredString(this.font, countText,
-                centerX, startY + sectionSpacing * 2 + 26, 0x55FF55);
+    private void drawSeparator(GuiGraphics graphics, int cx, int y) {
+        int halfWidth = 80;
+        graphics.fill(cx - halfWidth, y, cx + halfWidth, y + 1, 0x40FFFFFF);
     }
 
     @Override
@@ -133,23 +147,27 @@ public class AxolotlUtilsScreen extends Screen {
         return false;
     }
 
-    private String getHighlightLabel() {
-        return "Highlight Blue: " + (AxolotlUtilsConfig.isHighlightBlueEnabled() ? "ON" : "OFF");
+    private String stateText(boolean on) {
+        return Component.translatable(on ? "axolotlutils.state.on" : "axolotlutils.state.off").getString();
     }
 
-    private String getColoredBucketsLabel() {
-        return "Colored Buckets: " + (AxolotlUtilsConfig.isColoredBucketsEnabled() ? "ON" : "OFF");
+    private Component getHighlightLabel() {
+        return Component.translatable("axolotlutils.screen.highlight_blue", stateText(AxolotlUtilsConfig.isHighlightBlueEnabled()));
     }
 
-    private String getBreedingLabel() {
-        return "Breeding Tracker: " + (AxolotlUtilsConfig.isBreedingTrackerEnabled() ? "ON" : "OFF");
+    private Component getColoredBucketsLabel() {
+        return Component.translatable("axolotlutils.screen.colored_buckets", stateText(AxolotlUtilsConfig.isColoredBucketsEnabled()));
     }
 
-    private String getIconColorLabel() {
-        return "Icon Color: " + AxolotlUtilsConfig.getHudIconColor().getDisplayName();
+    private Component getBreedingLabel() {
+        return Component.translatable("axolotlutils.screen.breeding_tracker", stateText(AxolotlUtilsConfig.isBreedingTrackerEnabled()));
     }
 
-    private String getAnimationLabel() {
-        return "Animated Icon: " + (AxolotlUtilsConfig.isHudAnimated() ? "ON" : "OFF");
+    private Component getIconColorLabel() {
+        return Component.translatable("axolotlutils.screen.icon_color", AxolotlUtilsConfig.getHudIconColor().getDisplayName());
+    }
+
+    private Component getAnimationLabel() {
+        return Component.translatable("axolotlutils.screen.animated", stateText(AxolotlUtilsConfig.isHudAnimated()));
     }
 }

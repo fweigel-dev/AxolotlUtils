@@ -19,6 +19,7 @@ public class AxolotlUtilsStorage {
         int bredCount;
         String hudIconColor;
         Boolean hudAnimated;
+        Float axolotlVolume;
     }
 
     public static void loadForWorld(Minecraft client) {
@@ -39,6 +40,7 @@ public class AxolotlUtilsStorage {
                 BreedingTracker.setCount(data.bredCount);
                 AxolotlUtilsConfig.setHudIconColor(AxolotlColor.fromName(data.hudIconColor));
                 AxolotlUtilsConfig.setHudAnimated(data.hudAnimated != null && data.hudAnimated);
+                AxolotlUtilsConfig.setAxolotlVolume(data.axolotlVolume != null ? data.axolotlVolume : 1.0f);
             }
         } catch (IOException e) {
             AxolotlUtils.LOGGER.error("Failed to load Axolotl Utils data", e);
@@ -57,6 +59,7 @@ public class AxolotlUtilsStorage {
         data.bredCount = BreedingTracker.getCount();
         data.hudIconColor = AxolotlUtilsConfig.getHudIconColor().name();
         data.hudAnimated = AxolotlUtilsConfig.isHudAnimated();
+        data.axolotlVolume = AxolotlUtilsConfig.getAxolotlVolume();
         try {
             Files.createDirectories(path.getParent());
             Files.writeString(path, GSON.toJson(data));

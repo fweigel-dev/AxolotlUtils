@@ -5,7 +5,8 @@
 	"client": [
 		"AxolotlRendererMixin",
 		"AxolotlBucketOverlayMixin",
-		"ItemModelResolverMixin"
+		"ItemModelResolverMixin",
+		"AxolotlSoundMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

@@ -6,6 +6,7 @@
   "axolotlutils.screen.title": "Axolotl Utils",
   "axolotlutils.screen.section.features": "Features",
   "axolotlutils.screen.section.breeding": "Breeding Tracker",
+  "axolotlutils.screen.section.sound": "Sound",
 
   "axolotlutils.screen.highlight_blue": "Highlight Blue: %s",
   "axolotlutils.screen.colored_buckets": "Colored Buckets: %s",
@@ -13,6 +14,7 @@
   "axolotlutils.screen.icon_color": "Icon: %s",
   "axolotlutils.screen.animated": "Animated: %s",
   "axolotlutils.screen.reset_counter": "Reset Counter",
+  "axolotlutils.screen.sound_volume": "Axolotl Volume: %s",
   "axolotlutils.screen.bred_count": "Axolotls bred: %s",
 
   "axolotlutils.state.on": "ON",

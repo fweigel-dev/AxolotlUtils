@@ -4,6 +4,7 @@ import dev.fweigel.AxolotlUtilsConfig;
 import dev.fweigel.AxolotlUtilsStorage;
 import dev.fweigel.BreedingTracker;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
@@ -22,6 +23,7 @@ public class AxolotlUtilsScreen extends Screen {
 
     private final Component featuresHeader = Component.translatable("axolotlutils.screen.section.features");
     private final Component breedingHeader = Component.translatable("axolotlutils.screen.section.breeding");
+    private final Component soundHeader = Component.translatable("axolotlutils.screen.section.sound");
 
     public AxolotlUtilsScreen() {
         super(Component.translatable("axolotlutils.screen.title"));
@@ -109,6 +111,24 @@ public class AxolotlUtilsScreen extends Screen {
                 }
         ).bounds(cx - 50, y, 100, BUTTON_HEIGHT).build());
 
+        // --- Sound section ---
+        int soundSectionY = y + BUTTON_GAP + 16;
+        y = soundSectionY + 14;
+
+        addRenderableWidget(new AbstractSliderButton(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT,
+                getVolumeLabel(AxolotlUtilsConfig.getAxolotlVolume()), AxolotlUtilsConfig.getAxolotlVolume()) {
+            @Override
+            protected void updateMessage() {
+                setMessage(getVolumeLabel((float) this.value));
+            }
+
+            @Override
+            protected void applyValue() {
+                AxolotlUtilsConfig.setAxolotlVolume((float) this.value);
+                AxolotlUtilsStorage.save();
+            }
+        });
+
         // --- Done button at bottom ---
         addRenderableWidget(Button.builder(
                 Component.translatable("gui.done"),
@@ -135,6 +155,10 @@ public class AxolotlUtilsScreen extends Screen {
         graphics.drawCenteredString(this.font, this.breedingHeader, cx, breedingSectionY, 0xFFFFFFFF);
         drawSeparator(graphics, cx, breedingSectionY + 10);
 
+        // --- Sound section header ---
+        int soundSectionY = breedingSectionY + 14 + BUTTON_GAP * 3 + 16;
+        graphics.drawCenteredString(this.font, this.soundHeader, cx, soundSectionY, 0xFFFFFFFF);
+        drawSeparator(graphics, cx, soundSectionY + 10);
     }
 
     private void drawSeparator(GuiGraphics graphics, int cx, int y) {
@@ -169,5 +193,9 @@ public class AxolotlUtilsScreen extends Screen {
 
     private Component getAnimationLabel() {
         return Component.translatable("axolotlutils.screen.animated", stateText(AxolotlUtilsConfig.isHudAnimated()));
+    }
+
+    private Component getVolumeLabel(float volume) {
+        return Component.translatable("axolotlutils.screen.sound_volume", String.valueOf(Math.round(volume * 100)) + "%");
     }
 }

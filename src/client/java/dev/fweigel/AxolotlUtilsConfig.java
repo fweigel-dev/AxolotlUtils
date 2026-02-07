@@ -6,6 +6,7 @@ public class AxolotlUtilsConfig {
     private static boolean breedingTrackerEnabled = true;
     private static AxolotlColor hudIconColor = AxolotlColor.LUCY;
     private static boolean hudAnimated = false;
+    private static float axolotlVolume = 1.0f;
 
     public static boolean isHighlightBlueEnabled() {
         return highlightBlueEnabled;
@@ -67,11 +68,20 @@ public class AxolotlUtilsConfig {
         hudAnimated = !hudAnimated;
     }
 
+    public static float getAxolotlVolume() {
+        return axolotlVolume;
+    }
+
+    public static void setAxolotlVolume(float v) {
+        axolotlVolume = Math.max(0.0f, Math.min(1.0f, v));
+    }
+
     public static void reset() {
         highlightBlueEnabled = false;
         coloredBucketsEnabled = false;
         breedingTrackerEnabled = true;
         hudIconColor = AxolotlColor.LUCY;
         hudAnimated = false;
+        axolotlVolume = 1.0f;
     }
 }

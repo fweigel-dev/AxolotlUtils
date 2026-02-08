@@ -27,5 +27,11 @@ public final class ServerBreedingNetworkHandler {
         }
     }
 
+    public static void notifyFishFedEvent(ServerPlayer player) {
+        if (MOD_PLAYERS.contains(player)) {
+            ServerPlayNetworking.send(player, new AxolotlUtilsPayloads.FishFedEventS2C());
+        }
+    }
+
     private ServerBreedingNetworkHandler() {}
 }

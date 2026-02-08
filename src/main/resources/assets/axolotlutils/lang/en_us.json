@@ -10,12 +10,19 @@
 
   "axolotlutils.screen.highlight_blue": "Highlight Blue: %s",
   "axolotlutils.screen.colored_buckets": "Colored Buckets: %s",
+  "axolotlutils.screen.fish_bucket_lock": "Fish Bucket Lock: %s",
   "axolotlutils.screen.breeding_tracker": "Breeding Tracker: %s",
   "axolotlutils.screen.icon_color": "Icon: %s",
   "axolotlutils.screen.animated": "Animated: %s",
+  "axolotlutils.screen.display_mode": "Display: %s",
+  "axolotlutils.screen.display.bred_count": "Axolotls Bred",
+  "axolotlutils.screen.display.fish_used": "Fish Fed",
+  "axolotlutils.screen.reset_bred": "Reset Bred",
+  "axolotlutils.screen.reset_fish": "Reset Fish",
   "axolotlutils.screen.reset_counter": "Reset Counter",
   "axolotlutils.screen.sound_volume": "Axolotl Volume: %s",
   "axolotlutils.screen.bred_count": "Axolotls bred: %s",
+  "axolotlutils.screen.fish_used_count": "Fish fed: %s",
 
   "axolotlutils.state.on": "ON",
   "axolotlutils.state.off": "OFF"

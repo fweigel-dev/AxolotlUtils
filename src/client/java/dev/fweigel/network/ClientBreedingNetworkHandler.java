@@ -26,6 +26,13 @@ public final class ClientBreedingNetworkHandler {
                 AxolotlUtilsStorage.save();
             });
         });
+
+        ClientPlayNetworking.registerGlobalReceiver(AxolotlUtilsPayloads.FishFedEventS2C.TYPE, (payload, context) -> {
+            context.client().execute(() -> {
+                BreedingTracker.incrementFishUsed();
+                AxolotlUtilsStorage.save();
+            });
+        });
     }
 
     public static void onJoin() {

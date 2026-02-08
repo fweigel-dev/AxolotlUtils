@@ -8,8 +8,11 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.item.Items;
 import org.lwjgl.glfw.GLFW;
 
 public class AxolotlUtilsClient implements ClientModInitializer {
@@ -40,6 +43,14 @@ public class AxolotlUtilsClient implements ClientModInitializer {
         });
 
         HudRenderCallback.EVENT.register(BreedingOverlayRenderer::render);
+
+        UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
+            if (AxolotlUtilsConfig.isFishBucketLockEnabled()
+                    && player.getItemInHand(hand).is(Items.TROPICAL_FISH_BUCKET)) {
+                return InteractionResult.FAIL;
+            }
+            return InteractionResult.PASS;
+        });
     }
 
     private static KeyMapping registerConfigKey() {

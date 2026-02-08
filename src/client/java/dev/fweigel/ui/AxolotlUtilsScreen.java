@@ -12,7 +12,9 @@ import net.minecraft.network.chat.Component;
 public class AxolotlUtilsScreen extends Screen {
     private Button highlightToggle;
     private Button coloredBucketsToggle;
+    private Button fishBucketLockToggle;
     private Button breedingToggle;
+    private Button displayModeButton;
     private Button iconColorButton;
     private Button animationToggle;
 
@@ -57,6 +59,17 @@ public class AxolotlUtilsScreen extends Screen {
                 }
         ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
+        y += BUTTON_GAP;
+
+        fishBucketLockToggle = addRenderableWidget(Button.builder(
+                getFishBucketLockLabel(),
+                button -> {
+                    AxolotlUtilsConfig.toggleFishBucketLock();
+                    fishBucketLockToggle.setMessage(getFishBucketLockLabel());
+                    AxolotlUtilsStorage.save();
+                }
+        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
+
         // --- Breeding Tracker section ---
         int breedingSectionY = y + BUTTON_GAP + 16;
         y = breedingSectionY + 14;
@@ -67,11 +80,24 @@ public class AxolotlUtilsScreen extends Screen {
                     AxolotlUtilsConfig.toggleBreedingTracker();
                     breedingToggle.setMessage(getBreedingLabel());
                     boolean enabled = AxolotlUtilsConfig.isBreedingTrackerEnabled();
+                    displayModeButton.active = enabled;
                     iconColorButton.active = enabled;
                     animationToggle.active = enabled;
                     AxolotlUtilsStorage.save();
                 }
         ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
+
+        y += BUTTON_GAP;
+
+        displayModeButton = addRenderableWidget(Button.builder(
+                getDisplayModeLabel(),
+                button -> {
+                    AxolotlUtilsConfig.toggleShowFishTracker();
+                    displayModeButton.setMessage(getDisplayModeLabel());
+                    AxolotlUtilsStorage.save();
+                }
+        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
+        displayModeButton.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
 
         y += BUTTON_GAP;
 
@@ -102,14 +128,22 @@ public class AxolotlUtilsScreen extends Screen {
 
         y += BUTTON_GAP;
 
-        // Reset counter - smaller, centered
+        // Reset counters side by side
         addRenderableWidget(Button.builder(
-                Component.translatable("axolotlutils.screen.reset_counter"),
+                Component.translatable("axolotlutils.screen.reset_bred"),
                 button -> {
                     BreedingTracker.reset();
                     AxolotlUtilsStorage.save();
                 }
-        ).bounds(cx - 50, y, 100, BUTTON_HEIGHT).build());
+        ).bounds(leftX, y, HALF_BUTTON_WIDTH, BUTTON_HEIGHT).build());
+
+        addRenderableWidget(Button.builder(
+                Component.translatable("axolotlutils.screen.reset_fish"),
+                button -> {
+                    BreedingTracker.resetFishUsed();
+                    AxolotlUtilsStorage.save();
+                }
+        ).bounds(rightX, y, HALF_BUTTON_WIDTH, BUTTON_HEIGHT).build());
 
         // --- Sound section ---
         int soundSectionY = y + BUTTON_GAP + 16;
@@ -151,12 +185,12 @@ public class AxolotlUtilsScreen extends Screen {
         drawSeparator(graphics, cx, featuresHeaderY + 10);
 
         // --- Breeding Tracker section header ---
-        int breedingSectionY = featuresHeaderY + 14 + BUTTON_GAP * 2 + 16;
+        int breedingSectionY = featuresHeaderY + 14 + BUTTON_GAP * 3 + 16;
         graphics.drawCenteredString(this.font, this.breedingHeader, cx, breedingSectionY, 0xFFFFFFFF);
         drawSeparator(graphics, cx, breedingSectionY + 10);
 
         // --- Sound section header ---
-        int soundSectionY = breedingSectionY + 14 + BUTTON_GAP * 3 + 16;
+        int soundSectionY = breedingSectionY + 14 + BUTTON_GAP * 4 + 16;
         graphics.drawCenteredString(this.font, this.soundHeader, cx, soundSectionY, 0xFFFFFFFF);
         drawSeparator(graphics, cx, soundSectionY + 10);
     }
@@ -183,6 +217,10 @@ public class AxolotlUtilsScreen extends Screen {
         return Component.translatable("axolotlutils.screen.colored_buckets", stateText(AxolotlUtilsConfig.isColoredBucketsEnabled()));
     }
 
+    private Component getFishBucketLockLabel() {
+        return Component.translatable("axolotlutils.screen.fish_bucket_lock", stateText(AxolotlUtilsConfig.isFishBucketLockEnabled()));
+    }
+
     private Component getBreedingLabel() {
         return Component.translatable("axolotlutils.screen.breeding_tracker", stateText(AxolotlUtilsConfig.isBreedingTrackerEnabled()));
     }
@@ -193,6 +231,13 @@ public class AxolotlUtilsScreen extends Screen {
 
     private Component getAnimationLabel() {
         return Component.translatable("axolotlutils.screen.animated", stateText(AxolotlUtilsConfig.isHudAnimated()));
+    }
+
+    private Component getDisplayModeLabel() {
+        String mode = Component.translatable(AxolotlUtilsConfig.isShowFishTracker()
+                ? "axolotlutils.screen.display.fish_used"
+                : "axolotlutils.screen.display.bred_count").getString();
+        return Component.translatable("axolotlutils.screen.display_mode", mode);
     }
 
     private Component getVolumeLabel(float volume) {

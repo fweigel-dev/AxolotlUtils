@@ -38,10 +38,21 @@ public final class AxolotlUtilsPayloads {
         }
     }
 
+    public record FishFedEventS2C() implements CustomPacketPayload {
+        public static final Type<FishFedEventS2C> TYPE = new Type<>(
+                Identifier.fromNamespaceAndPath(AxolotlUtils.MOD_ID, "fish_fed_event"));
+
+        @Override
+        public Type<FishFedEventS2C> type() {
+            return TYPE;
+        }
+    }
+
     public static void registerAll() {
         PayloadTypeRegistry.playC2S().register(HelloC2S.TYPE, StreamCodec.unit(new HelloC2S()));
         PayloadTypeRegistry.playS2C().register(HelloAckS2C.TYPE, StreamCodec.unit(new HelloAckS2C()));
         PayloadTypeRegistry.playS2C().register(BreedingEventS2C.TYPE, StreamCodec.unit(new BreedingEventS2C()));
+        PayloadTypeRegistry.playS2C().register(FishFedEventS2C.TYPE, StreamCodec.unit(new FishFedEventS2C()));
     }
 
     private AxolotlUtilsPayloads() {}

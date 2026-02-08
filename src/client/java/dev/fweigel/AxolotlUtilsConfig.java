@@ -7,6 +7,8 @@ public class AxolotlUtilsConfig {
     private static AxolotlColor hudIconColor = AxolotlColor.LUCY;
     private static boolean hudAnimated = false;
     private static float axolotlVolume = 1.0f;
+    private static boolean showFishTracker = false;
+    private static boolean fishBucketLockEnabled = false;
 
     public static boolean isHighlightBlueEnabled() {
         return highlightBlueEnabled;
@@ -76,6 +78,30 @@ public class AxolotlUtilsConfig {
         axolotlVolume = Math.max(0.0f, Math.min(1.0f, v));
     }
 
+    public static boolean isShowFishTracker() {
+        return showFishTracker;
+    }
+
+    public static void setShowFishTracker(boolean show) {
+        showFishTracker = show;
+    }
+
+    public static void toggleShowFishTracker() {
+        showFishTracker = !showFishTracker;
+    }
+
+    public static boolean isFishBucketLockEnabled() {
+        return fishBucketLockEnabled;
+    }
+
+    public static void setFishBucketLockEnabled(boolean enabled) {
+        fishBucketLockEnabled = enabled;
+    }
+
+    public static void toggleFishBucketLock() {
+        fishBucketLockEnabled = !fishBucketLockEnabled;
+    }
+
     public static void reset() {
         highlightBlueEnabled = false;
         coloredBucketsEnabled = false;
@@ -83,5 +109,7 @@ public class AxolotlUtilsConfig {
         hudIconColor = AxolotlColor.LUCY;
         hudAnimated = false;
         axolotlVolume = 1.0f;
+        showFishTracker = false;
+        fishBucketLockEnabled = false;
     }
 }

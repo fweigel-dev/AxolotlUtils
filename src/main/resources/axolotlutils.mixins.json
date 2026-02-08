@@ -3,7 +3,8 @@
 	"package": "dev.fweigel.mixin",
 	"compatibilityLevel": "JAVA_21",
 	"mixins": [
-		"AnimalBreedingMixin"
+		"AnimalBreedingMixin",
+		"AnimalFeedMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1

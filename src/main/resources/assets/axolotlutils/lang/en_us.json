@@ -9,9 +9,13 @@
   "axolotlutils.screen.section.sound": "Sound",
 
   "axolotlutils.screen.highlight_blue": "Highlight Blue: %s",
+  "axolotlutils.screen.highlight_blue.card": "Highlight: %s",
   "axolotlutils.screen.colored_buckets": "Colored Buckets: %s",
+  "axolotlutils.screen.colored_buckets.card": "Buckets: %s",
   "axolotlutils.screen.fish_bucket_lock": "Fish Bucket Lock: %s",
+  "axolotlutils.screen.fish_bucket_lock.card": "Fish Lock: %s",
   "axolotlutils.screen.breeding_tracker": "Breeding Tracker: %s",
+  "axolotlutils.screen.breeding_tracker.card": "Breeding: %s",
   "axolotlutils.screen.icon_color": "Icon: %s",
   "axolotlutils.screen.animated": "Animated: %s",
   "axolotlutils.screen.display_mode": "Display: %s",

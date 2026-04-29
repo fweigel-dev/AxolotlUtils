@@ -5,7 +5,7 @@ import dev.fweigel.AxolotlUtilsConfig;
 import dev.fweigel.BreedingTracker;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -26,7 +26,7 @@ public final class BreedingOverlayRenderer {
     private BreedingOverlayRenderer() {
     }
 
-    public static void render(GuiGraphics graphics, DeltaTracker deltaTracker) {
+    public static void render(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         if (!AxolotlUtilsConfig.isBreedingTrackerEnabled()) {
             return;
         }
@@ -53,7 +53,7 @@ public final class BreedingOverlayRenderer {
         int iconScreenY = toastY + ICON_Y;
 
         if (AxolotlUtilsConfig.isShowFishTracker()) {
-            graphics.renderItem(FISH_BUCKET, iconScreenX, iconScreenY);
+            graphics.item(FISH_BUCKET, iconScreenX, iconScreenY);
         } else {
             AxolotlColor color = AxolotlUtilsConfig.getHudIconColor();
             boolean animated = AxolotlUtilsConfig.isHudAnimated();
@@ -89,14 +89,14 @@ public final class BreedingOverlayRenderer {
         // Render text lines matching advancement toast layout
         int textScreenX = toastX + TEXT_X;
         if (AxolotlUtilsConfig.isShowFishTracker()) {
-            graphics.drawString(minecraft.font, "Fish fed",
+            graphics.text(minecraft.font, "Fish fed",
                     textScreenX, toastY + 7, 0xFFFFFF00, false);
-            graphics.drawString(minecraft.font, String.valueOf(BreedingTracker.getFishUsedCount()),
+            graphics.text(minecraft.font, String.valueOf(BreedingTracker.getFishUsedCount()),
                     textScreenX, toastY + 18, 0xFFFFFFFF, false);
         } else {
-            graphics.drawString(minecraft.font, "Axolotls bred",
+            graphics.text(minecraft.font, "Axolotls bred",
                     textScreenX, toastY + 7, 0xFFFFFF00, false);
-            graphics.drawString(minecraft.font, String.valueOf(BreedingTracker.getCount()),
+            graphics.text(minecraft.font, String.valueOf(BreedingTracker.getCount()),
                     textScreenX, toastY + 18, 0xFFFFFFFF, false);
         }
     }

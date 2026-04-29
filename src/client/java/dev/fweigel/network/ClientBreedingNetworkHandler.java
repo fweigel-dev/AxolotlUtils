@@ -4,17 +4,17 @@ import dev.fweigel.AxolotlUtils;
 import dev.fweigel.AxolotlUtilsStorage;
 import dev.fweigel.BreedingTracker;
 import dev.fweigel.TrackingMode;
+import dev.fweigel.mobutils.core.client.network.ClientHandshakeTracker;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 
 public final class ClientBreedingNetworkHandler {
 
-    private static int handshakeTimer = -1;
-    private static final int HANDSHAKE_TIMEOUT = 60;
+    private static final ClientHandshakeTracker handshake = new ClientHandshakeTracker();
 
     public static void register() {
         ClientPlayNetworking.registerGlobalReceiver(AxolotlUtilsPayloads.HelloAckS2C.TYPE, (payload, context) -> {
             context.client().execute(() -> {
-                handshakeTimer = -1;
+                handshake.onAck();
                 BreedingTracker.setMode(TrackingMode.SERVER_SYNCED);
                 AxolotlUtils.LOGGER.info("Breeding tracking: SERVER_SYNCED mode");
             });
@@ -38,7 +38,7 @@ public final class ClientBreedingNetworkHandler {
     public static void onJoin() {
         if (ClientPlayNetworking.canSend(AxolotlUtilsPayloads.HelloC2S.TYPE)) {
             ClientPlayNetworking.send(new AxolotlUtilsPayloads.HelloC2S());
-            handshakeTimer = HANDSHAKE_TIMEOUT;
+            handshake.startHandshake();
         } else {
             BreedingTracker.setMode(TrackingMode.CLIENT_ONLY);
             AxolotlUtils.LOGGER.info("Breeding tracking: CLIENT_ONLY mode (server does not support hello)");
@@ -46,13 +46,9 @@ public final class ClientBreedingNetworkHandler {
     }
 
     public static void tick() {
-        if (handshakeTimer > 0) {
-            handshakeTimer--;
-            if (handshakeTimer == 0) {
-                handshakeTimer = -1;
-                BreedingTracker.setMode(TrackingMode.CLIENT_ONLY);
-                AxolotlUtils.LOGGER.info("Breeding tracking: CLIENT_ONLY mode (handshake timeout)");
-            }
+        if (handshake.tick()) {
+            BreedingTracker.setMode(TrackingMode.CLIENT_ONLY);
+            AxolotlUtils.LOGGER.info("Breeding tracking: CLIENT_ONLY mode (handshake timeout)");
         }
     }
 

@@ -2,7 +2,7 @@ package dev.fweigel.mixin.client;
 
 import dev.fweigel.AxolotlUtils;
 import dev.fweigel.AxolotlUtilsConfig;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.component.DataComponents;
@@ -18,7 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 
-@Mixin(GuiGraphics.class)
+@Mixin(GuiGraphicsExtractor.class)
 public class AxolotlBucketOverlayMixin {
 
     @Unique
@@ -29,7 +29,7 @@ public class AxolotlBucketOverlayMixin {
             Axolotl.Variant.BLUE, Identifier.fromNamespaceAndPath(AxolotlUtils.MOD_ID, "textures/item/axolotl_bucket/axolotl_bucket_4.png")
     );
 
-    @Inject(method = "renderItemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V",
+    @Inject(method = "itemDecorations(Lnet/minecraft/client/gui/Font;Lnet/minecraft/world/item/ItemStack;IILjava/lang/String;)V",
             at = @At("HEAD"))
     private void axolotlutils$renderBucketOverlay(Font font, ItemStack stack, int x, int y, String text, CallbackInfo ci) {
         if (!AxolotlUtilsConfig.isColoredBucketsEnabled()) {
@@ -50,7 +50,7 @@ public class AxolotlBucketOverlayMixin {
             return;
         }
 
-        GuiGraphics self = (GuiGraphics) (Object) this;
+        GuiGraphicsExtractor self = (GuiGraphicsExtractor) (Object) this;
         self.blit(RenderPipelines.GUI_TEXTURED, overlay, x, y, 0, 0, 16, 16, 16, 16);
     }
 }

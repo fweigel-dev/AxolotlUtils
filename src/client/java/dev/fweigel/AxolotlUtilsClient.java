@@ -1,13 +1,14 @@
 package dev.fweigel;
 
+import dev.fweigel.mobutils.core.client.sound.SoundVolumeRegistry;
+import dev.fweigel.mobutils.core.client.util.ConfigKeyHelper;
 import dev.fweigel.network.ClientBreedingNetworkHandler;
 import dev.fweigel.ui.AxolotlUtilsScreen;
 import dev.fweigel.ui.BreedingOverlayRenderer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
-import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.event.player.UseBlockCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
@@ -20,7 +21,9 @@ public class AxolotlUtilsClient implements ClientModInitializer {
 
     @Override
     public void onInitializeClient() {
-        configKey = registerConfigKey();
+        configKey = ConfigKeyHelper.register(AxolotlUtils.MOD_ID, "key.axolotlutils.config", GLFW.GLFW_KEY_U);
+
+        SoundVolumeRegistry.register("entity.axolotl.", AxolotlUtilsConfig::getAxolotlVolume);
 
         ClientBreedingNetworkHandler.register();
         BreedingHeuristic.registerEvents();
@@ -42,7 +45,10 @@ public class AxolotlUtilsClient implements ClientModInitializer {
             }
         });
 
-        HudRenderCallback.EVENT.register(BreedingOverlayRenderer::render);
+        HudElementRegistry.addLast(
+                Identifier.fromNamespaceAndPath(AxolotlUtils.MOD_ID, "breeding_overlay"),
+                BreedingOverlayRenderer::render
+        );
 
         UseBlockCallback.EVENT.register((player, world, hand, hitResult) -> {
             if (AxolotlUtilsConfig.isFishBucketLockEnabled()
@@ -53,12 +59,4 @@ public class AxolotlUtilsClient implements ClientModInitializer {
         });
     }
 
-    private static KeyMapping registerConfigKey() {
-        KeyMapping.Category keyCategory = KeyMapping.Category.register(
-                Identifier.fromNamespaceAndPath(AxolotlUtils.MOD_ID, "general"));
-        return KeyBindingHelper.registerKeyBinding(new KeyMapping(
-                "key.axolotlutils.config",
-                GLFW.GLFW_KEY_U,
-                keyCategory));
-    }
 }

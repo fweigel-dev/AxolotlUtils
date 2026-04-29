@@ -49,10 +49,10 @@ public final class AxolotlUtilsPayloads {
     }
 
     public static void registerAll() {
-        PayloadTypeRegistry.playC2S().register(HelloC2S.TYPE, StreamCodec.unit(new HelloC2S()));
-        PayloadTypeRegistry.playS2C().register(HelloAckS2C.TYPE, StreamCodec.unit(new HelloAckS2C()));
-        PayloadTypeRegistry.playS2C().register(BreedingEventS2C.TYPE, StreamCodec.unit(new BreedingEventS2C()));
-        PayloadTypeRegistry.playS2C().register(FishFedEventS2C.TYPE, StreamCodec.unit(new FishFedEventS2C()));
+        PayloadTypeRegistry.serverboundPlay().register(HelloC2S.TYPE, StreamCodec.unit(new HelloC2S()));
+        PayloadTypeRegistry.clientboundPlay().register(HelloAckS2C.TYPE, StreamCodec.unit(new HelloAckS2C()));
+        PayloadTypeRegistry.clientboundPlay().register(BreedingEventS2C.TYPE, StreamCodec.unit(new BreedingEventS2C()));
+        PayloadTypeRegistry.clientboundPlay().register(FishFedEventS2C.TYPE, StreamCodec.unit(new FishFedEventS2C()));
     }
 
     private AxolotlUtilsPayloads() {}

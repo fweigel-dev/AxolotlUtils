@@ -3,234 +3,151 @@ package dev.fweigel.ui;
 import dev.fweigel.AxolotlUtilsConfig;
 import dev.fweigel.AxolotlUtilsStorage;
 import dev.fweigel.BreedingTracker;
-import net.minecraft.client.gui.GuiGraphics;
+import dev.fweigel.mobutils.core.client.ui.ModOptionsList;
+import dev.fweigel.mobutils.core.client.ui.ModOptionsList.CardSpec;
+import dev.fweigel.mobutils.core.client.ui.ModSettingsScreen;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
-import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.Identifier;
 
-public class AxolotlUtilsScreen extends Screen {
-    private Button highlightToggle;
-    private Button coloredBucketsToggle;
-    private Button fishBucketLockToggle;
-    private Button breedingToggle;
+public class AxolotlUtilsScreen extends ModSettingsScreen {
+
+    private static final Identifier IMG_HIGHLIGHT_ON  = id("highlight_on.png");
+    private static final Identifier IMG_HIGHLIGHT_OFF = id("highlight_off.png");
+    private static final Identifier IMG_BUCKETS_ON    = id("buckets_on.png");
+    private static final Identifier IMG_BUCKETS_OFF   = id("buckets_off.png");
+    private static final Identifier IMG_BREEDING_ON   = id("breeding_on.png");
+    private static final Identifier IMG_BREEDING_OFF  = id("breeding_off.png");
+    private static final Identifier IMG_FISH_LOCK_ON  = id("fish_lock_on.png");
+    private static final Identifier IMG_FISH_LOCK_OFF = id("fish_lock_off.png");
+
     private Button displayModeButton;
     private Button iconColorButton;
     private Button animationToggle;
-
-    private static final int BUTTON_WIDTH = 200;
-    private static final int HALF_BUTTON_WIDTH = 96;
-    private static final int BUTTON_HEIGHT = 20;
-    private static final int BUTTON_GAP = 24;
-
-    private final Component featuresHeader = Component.translatable("axolotlutils.screen.section.features");
-    private final Component breedingHeader = Component.translatable("axolotlutils.screen.section.breeding");
-    private final Component soundHeader = Component.translatable("axolotlutils.screen.section.sound");
 
     public AxolotlUtilsScreen() {
         super(Component.translatable("axolotlutils.screen.title"));
     }
 
     @Override
-    protected void init() {
-        int cx = this.width / 2;
+    protected void addOptions(ModOptionsList list) {
+        // ── Row 1: Highlight Blue (left) | Colored Buckets (right) ───────────
+        list.addSplitCard(
+            CardSpec.image(() -> AxolotlUtilsConfig.isHighlightBlueEnabled()  ? IMG_HIGHLIGHT_ON : IMG_HIGHLIGHT_OFF),
+            buildHalfButton(this::getHighlightLabel, () -> {
+                AxolotlUtilsConfig.toggleHighlightBlue();
+                AxolotlUtilsStorage.save();
+            }),
+            CardSpec.image(() -> AxolotlUtilsConfig.isColoredBucketsEnabled() ? IMG_BUCKETS_ON : IMG_BUCKETS_OFF),
+            buildHalfButton(this::getColoredBucketsLabel, () -> {
+                AxolotlUtilsConfig.toggleColoredBuckets();
+                AxolotlUtilsStorage.save();
+            })
+        );
 
-        // --- Features section ---
-        int featuresHeaderY = 36;
-        int y = featuresHeaderY + 14;
+        // ── Row 2: Breeding Tracker (left) | Fish Bucket Lock (right) ────────
+        Button breedingBtn = buildHalfButton(this::getBreedingLabel, () -> {
+            AxolotlUtilsConfig.toggleBreedingTracker();
+            boolean on = AxolotlUtilsConfig.isBreedingTrackerEnabled();
+            displayModeButton.active = on;
+            iconColorButton.active   = on;
+            animationToggle.active   = on;
+            AxolotlUtilsStorage.save();
+        });
+        list.addSplitCard(
+            CardSpec.image(() -> AxolotlUtilsConfig.isBreedingTrackerEnabled() ? IMG_BREEDING_ON  : IMG_BREEDING_OFF),
+            breedingBtn,
+            CardSpec.image(() -> AxolotlUtilsConfig.isFishBucketLockEnabled()  ? IMG_FISH_LOCK_ON : IMG_FISH_LOCK_OFF),
+            buildHalfButton(this::getFishBucketLockLabel, () -> {
+                AxolotlUtilsConfig.toggleFishBucketLock();
+                AxolotlUtilsStorage.save();
+            })
+        );
 
-        highlightToggle = addRenderableWidget(Button.builder(
-                getHighlightLabel(),
-                button -> {
-                    AxolotlUtilsConfig.toggleHighlightBlue();
-                    highlightToggle.setMessage(getHighlightLabel());
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
-
-        y += BUTTON_GAP;
-
-        coloredBucketsToggle = addRenderableWidget(Button.builder(
-                getColoredBucketsLabel(),
-                button -> {
-                    AxolotlUtilsConfig.toggleColoredBuckets();
-                    coloredBucketsToggle.setMessage(getColoredBucketsLabel());
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
-
-        y += BUTTON_GAP;
-
-        fishBucketLockToggle = addRenderableWidget(Button.builder(
-                getFishBucketLockLabel(),
-                button -> {
-                    AxolotlUtilsConfig.toggleFishBucketLock();
-                    fishBucketLockToggle.setMessage(getFishBucketLockLabel());
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
-
-        // --- Breeding Tracker section ---
-        int breedingSectionY = y + BUTTON_GAP + 16;
-        y = breedingSectionY + 14;
-
-        breedingToggle = addRenderableWidget(Button.builder(
-                getBreedingLabel(),
-                button -> {
-                    AxolotlUtilsConfig.toggleBreedingTracker();
-                    breedingToggle.setMessage(getBreedingLabel());
-                    boolean enabled = AxolotlUtilsConfig.isBreedingTrackerEnabled();
-                    displayModeButton.active = enabled;
-                    iconColorButton.active = enabled;
-                    animationToggle.active = enabled;
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
-
-        y += BUTTON_GAP;
-
-        displayModeButton = addRenderableWidget(Button.builder(
-                getDisplayModeLabel(),
-                button -> {
-                    AxolotlUtilsConfig.toggleShowFishTracker();
-                    displayModeButton.setMessage(getDisplayModeLabel());
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT).build());
+        // ── Display mode (full-width) ─────────────────────────────────────────
+        displayModeButton = buildWideButton(this::getDisplayModeLabel, () -> {
+            AxolotlUtilsConfig.toggleShowFishTracker();
+            AxolotlUtilsStorage.save();
+        });
         displayModeButton.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
+        list.addWide(displayModeButton);
 
-        y += BUTTON_GAP;
-
-        // Icon color + animation side by side
-        int gap = 8;
-        int leftX = cx - HALF_BUTTON_WIDTH - gap / 2;
-        int rightX = cx + gap / 2;
-
-        iconColorButton = addRenderableWidget(Button.builder(
-                getIconColorLabel(),
-                button -> {
-                    AxolotlUtilsConfig.cycleHudIconColor();
-                    iconColorButton.setMessage(getIconColorLabel());
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(leftX, y, HALF_BUTTON_WIDTH, BUTTON_HEIGHT).build());
+        // ── Icon color | Animation ────────────────────────────────────────────
+        iconColorButton = buildHalfButton(this::getIconColorLabel, () -> {
+            AxolotlUtilsConfig.cycleHudIconColor();
+            AxolotlUtilsStorage.save();
+        });
         iconColorButton.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
 
-        animationToggle = addRenderableWidget(Button.builder(
-                getAnimationLabel(),
-                button -> {
-                    AxolotlUtilsConfig.toggleHudAnimated();
-                    animationToggle.setMessage(getAnimationLabel());
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(rightX, y, HALF_BUTTON_WIDTH, BUTTON_HEIGHT).build());
-        animationToggle.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
-
-        y += BUTTON_GAP;
-
-        // Reset counters side by side
-        addRenderableWidget(Button.builder(
-                Component.translatable("axolotlutils.screen.reset_bred"),
-                button -> {
-                    BreedingTracker.reset();
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(leftX, y, HALF_BUTTON_WIDTH, BUTTON_HEIGHT).build());
-
-        addRenderableWidget(Button.builder(
-                Component.translatable("axolotlutils.screen.reset_fish"),
-                button -> {
-                    BreedingTracker.resetFishUsed();
-                    AxolotlUtilsStorage.save();
-                }
-        ).bounds(rightX, y, HALF_BUTTON_WIDTH, BUTTON_HEIGHT).build());
-
-        // --- Sound section ---
-        int soundSectionY = y + BUTTON_GAP + 16;
-        y = soundSectionY + 14;
-
-        addRenderableWidget(new AbstractSliderButton(cx - BUTTON_WIDTH / 2, y, BUTTON_WIDTH, BUTTON_HEIGHT,
-                getVolumeLabel(AxolotlUtilsConfig.getAxolotlVolume()), AxolotlUtilsConfig.getAxolotlVolume()) {
-            @Override
-            protected void updateMessage() {
-                setMessage(getVolumeLabel((float) this.value));
-            }
-
-            @Override
-            protected void applyValue() {
-                AxolotlUtilsConfig.setAxolotlVolume((float) this.value);
-                AxolotlUtilsStorage.save();
-            }
+        animationToggle = buildHalfButton(this::getAnimationLabel, () -> {
+            AxolotlUtilsConfig.toggleHudAnimated();
+            AxolotlUtilsStorage.save();
         });
+        animationToggle.active = AxolotlUtilsConfig.isBreedingTrackerEnabled();
+        list.addSplit(iconColorButton, animationToggle);
 
-        // --- Done button at bottom ---
-        addRenderableWidget(Button.builder(
-                Component.translatable("gui.done"),
-                button -> this.onClose()
-        ).bounds(cx - BUTTON_WIDTH / 2, this.height - 28, BUTTON_WIDTH, BUTTON_HEIGHT).build());
+        // ── Reset bred | Reset fish ───────────────────────────────────────────
+        list.addSplit(
+            buildHalfButton(() -> Component.translatable("axolotlutils.screen.reset_bred"), () -> {
+                BreedingTracker.reset();
+                AxolotlUtilsStorage.save();
+            }),
+            buildHalfButton(() -> Component.translatable("axolotlutils.screen.reset_fish"), () -> {
+                BreedingTracker.resetFishUsed();
+                AxolotlUtilsStorage.save();
+            })
+        );
+
+        // ── Volume slider (full-width) ────────────────────────────────────────
+        list.addWide(new AbstractSliderButton(0, 0, BUTTON_WIDTH, BUTTON_HEIGHT,
+                getVolumeLabel(AxolotlUtilsConfig.getAxolotlVolume()),
+                AxolotlUtilsConfig.getAxolotlVolume()) {
+            @Override protected void updateMessage() { setMessage(getVolumeLabel((float) this.value)); }
+            @Override protected void applyValue()    { AxolotlUtilsConfig.setAxolotlVolume((float) this.value); AxolotlUtilsStorage.save(); }
+        });
     }
 
-    @Override
-    public void render(GuiGraphics graphics, int mouseX, int mouseY, float delta) {
-        super.render(graphics, mouseX, mouseY, delta);
+    // ── Utilities ──────────────────────────────────────────────────────────────
 
-        int cx = this.width / 2;
-
-        // Title
-        graphics.drawCenteredString(this.font, this.title, cx, 15, 0xFFFFFFFF);
-
-        // --- Features section header ---
-        int featuresHeaderY = 36;
-        graphics.drawCenteredString(this.font, this.featuresHeader, cx, featuresHeaderY, 0xFFFFFFFF);
-        drawSeparator(graphics, cx, featuresHeaderY + 10);
-
-        // --- Breeding Tracker section header ---
-        int breedingSectionY = featuresHeaderY + 14 + BUTTON_GAP * 3 + 16;
-        graphics.drawCenteredString(this.font, this.breedingHeader, cx, breedingSectionY, 0xFFFFFFFF);
-        drawSeparator(graphics, cx, breedingSectionY + 10);
-
-        // --- Sound section header ---
-        int soundSectionY = breedingSectionY + 14 + BUTTON_GAP * 4 + 16;
-        graphics.drawCenteredString(this.font, this.soundHeader, cx, soundSectionY, 0xFFFFFFFF);
-        drawSeparator(graphics, cx, soundSectionY + 10);
-    }
-
-    private void drawSeparator(GuiGraphics graphics, int cx, int y) {
-        int halfWidth = 80;
-        graphics.fill(cx - halfWidth, y, cx + halfWidth, y + 1, 0x40FFFFFF);
-    }
-
-    @Override
-    public boolean isPauseScreen() {
-        return false;
+    private static Identifier id(String path) {
+        return Identifier.parse("axolotlutils:textures/gui/preview/" + path);
     }
 
     private String stateText(boolean on) {
         return Component.translatable(on ? "axolotlutils.state.on" : "axolotlutils.state.off").getString();
     }
 
+    // ── Label suppliers ────────────────────────────────────────────────────────
+
     private Component getHighlightLabel() {
-        return Component.translatable("axolotlutils.screen.highlight_blue", stateText(AxolotlUtilsConfig.isHighlightBlueEnabled()));
+        return Component.translatable("axolotlutils.screen.highlight_blue.card",
+                stateText(AxolotlUtilsConfig.isHighlightBlueEnabled()));
     }
 
     private Component getColoredBucketsLabel() {
-        return Component.translatable("axolotlutils.screen.colored_buckets", stateText(AxolotlUtilsConfig.isColoredBucketsEnabled()));
+        return Component.translatable("axolotlutils.screen.colored_buckets.card",
+                stateText(AxolotlUtilsConfig.isColoredBucketsEnabled()));
     }
 
     private Component getFishBucketLockLabel() {
-        return Component.translatable("axolotlutils.screen.fish_bucket_lock", stateText(AxolotlUtilsConfig.isFishBucketLockEnabled()));
+        return Component.translatable("axolotlutils.screen.fish_bucket_lock.card",
+                stateText(AxolotlUtilsConfig.isFishBucketLockEnabled()));
     }
 
     private Component getBreedingLabel() {
-        return Component.translatable("axolotlutils.screen.breeding_tracker", stateText(AxolotlUtilsConfig.isBreedingTrackerEnabled()));
+        return Component.translatable("axolotlutils.screen.breeding_tracker.card",
+                stateText(AxolotlUtilsConfig.isBreedingTrackerEnabled()));
     }
 
     private Component getIconColorLabel() {
-        return Component.translatable("axolotlutils.screen.icon_color", AxolotlUtilsConfig.getHudIconColor().getDisplayName());
+        return Component.translatable("axolotlutils.screen.icon_color",
+                AxolotlUtilsConfig.getHudIconColor().getDisplayName());
     }
 
     private Component getAnimationLabel() {
-        return Component.translatable("axolotlutils.screen.animated", stateText(AxolotlUtilsConfig.isHudAnimated()));
+        return Component.translatable("axolotlutils.screen.animated",
+                stateText(AxolotlUtilsConfig.isHudAnimated()));
     }
 
     private Component getDisplayModeLabel() {
@@ -241,6 +158,7 @@ public class AxolotlUtilsScreen extends Screen {
     }
 
     private Component getVolumeLabel(float volume) {
-        return Component.translatable("axolotlutils.screen.sound_volume", String.valueOf(Math.round(volume * 100)) + "%");
+        return Component.translatable("axolotlutils.screen.sound_volume",
+                Math.round(volume * 100) + "%");
     }
 }

@@ -29,10 +29,7 @@
 			"environment": "client"
 		}
 	],
-	"suggests": {
-		"citresewn": "*"
-	},
-	"depends": {
+"depends": {
 		"fabricloader": ">=0.18.4",
 		"minecraft": "~26.1",
 		"java": ">=21",

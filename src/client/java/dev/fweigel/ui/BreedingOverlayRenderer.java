@@ -36,9 +36,9 @@ public final class BreedingOverlayRenderer {
             return;
         }
 
-        if (minecraft.options.hideGui) {
-            return;
-        }
+        // Note: in 26.2 the GUI-hidden (F1) flag is no longer publicly accessible; Fabric's
+        // HudElementRegistry elements are part of the vanilla layered HUD, which is already
+        // skipped while the GUI is hidden, so no explicit check is needed here.
 
         int screenWidth = minecraft.getWindow().getGuiScaledWidth();
         int toastX = screenWidth - TOAST_WIDTH;

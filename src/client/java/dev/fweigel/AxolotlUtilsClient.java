@@ -41,7 +41,7 @@ public class AxolotlUtilsClient implements ClientModInitializer {
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             ClientBreedingNetworkHandler.tick();
             while (configKey.consumeClick()) {
-                client.setScreen(new AxolotlUtilsScreen());
+                client.setScreenAndShow(new AxolotlUtilsScreen());
             }
         });
 

@@ -14,14 +14,14 @@ import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.Items;
-import org.lwjgl.glfw.GLFW;
+import com.mojang.blaze3d.platform.InputConstants;
 
 public class AxolotlUtilsClient implements ClientModInitializer {
     private static KeyMapping configKey;
 
     @Override
     public void onInitializeClient() {
-        configKey = ConfigKeyHelper.register(AxolotlUtils.MOD_ID, "key.axolotlutils.config", GLFW.GLFW_KEY_U);
+        configKey = ConfigKeyHelper.register(AxolotlUtils.MOD_ID, "key.axolotlutils.config", InputConstants.KEY_U);
 
         SoundVolumeRegistry.register("entity.axolotl.", AxolotlUtilsConfig::getAxolotlVolume);
 

@@ -8,6 +8,7 @@ import dev.fweigel.mobutils.core.client.ui.ModOptionsList.CardSpec;
 import dev.fweigel.mobutils.core.client.ui.ModSettingsScreen;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 
@@ -17,17 +18,17 @@ public class AxolotlUtilsScreen extends ModSettingsScreen {
     private static final Identifier IMG_HIGHLIGHT_OFF = id("highlight_off.png");
     private static final Identifier IMG_BUCKETS_ON    = id("buckets_on.png");
     private static final Identifier IMG_BUCKETS_OFF   = id("buckets_off.png");
-    private static final Identifier IMG_BREEDING_ON   = id("breeding_on.png");
-    private static final Identifier IMG_BREEDING_OFF  = id("breeding_off.png");
-    private static final Identifier IMG_FISH_LOCK_ON  = id("fish_lock_on.png");
-    private static final Identifier IMG_FISH_LOCK_OFF = id("fish_lock_off.png");
 
     private Button displayModeButton;
     private Button iconColorButton;
     private Button animationToggle;
 
     public AxolotlUtilsScreen() {
-        super(Component.translatable("axolotlutils.screen.title"));
+        this(null);
+    }
+
+    public AxolotlUtilsScreen(Screen parent) {
+        super(Component.translatable("axolotlutils.screen.title"), parent);
     }
 
     @Override
@@ -55,10 +56,8 @@ public class AxolotlUtilsScreen extends ModSettingsScreen {
             animationToggle.active   = on;
             AxolotlUtilsStorage.save();
         });
-        list.addSplitCard(
-            CardSpec.image(() -> AxolotlUtilsConfig.isBreedingTrackerEnabled() ? IMG_BREEDING_ON  : IMG_BREEDING_OFF),
+        list.addSplit(
             breedingBtn,
-            CardSpec.image(() -> AxolotlUtilsConfig.isFishBucketLockEnabled()  ? IMG_FISH_LOCK_ON : IMG_FISH_LOCK_OFF),
             buildHalfButton(this::getFishBucketLockLabel, () -> {
                 AxolotlUtilsConfig.toggleFishBucketLock();
                 AxolotlUtilsStorage.save();

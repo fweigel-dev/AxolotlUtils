@@ -8,10 +8,11 @@
 		"fweigel-dev"
 	],
 	"contact": {
-		"homepage": "",
-		"sources": ""
+		"homepage": "https://github.com/fweigel-dev/AxolotlUtils",
+		"sources": "https://github.com/fweigel-dev/AxolotlUtils",
+		"issues": "https://github.com/fweigel-dev/AxolotlUtils/issues"
 	},
-	"license": "CC0-1.0",
+	"license": "CC-BY-4.0",
 	"icon": "assets/axolotlutils/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -20,6 +21,9 @@
 		],
 		"client": [
 			"dev.fweigel.AxolotlUtilsClient"
+		],
+		"modmenu": [
+			"dev.fweigel.AxolotlUtilsModMenu"
 		]
 	},
 	"mixins": [
@@ -34,6 +38,9 @@
 		"minecraft": ">=26.3",
 		"java": ">=21",
 		"fabric-api": "*",
-		"fweigel-util-lib": ">=1.4.0"
+		"fweigel-util-lib": ">=1.7.0"
+	},
+	"suggests": {
+		"modmenu": "*"
 	}
 }
